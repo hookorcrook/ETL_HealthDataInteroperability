@@ -1,0 +1,1 @@
+In this project, I will be using apache spark and apache airflow to create an ETL pipeline that allows health data interoperability between open source health information management systems OpenMRS and DHIS2
