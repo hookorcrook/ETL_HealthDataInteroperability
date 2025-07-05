@@ -3,7 +3,7 @@
 services:
 
   spark-master:
-    image: bitnami/spark:latest
+    image: bitnami/spark:3.5.0-debian-11-r0
     environment:
       - SPARK_MODE=master
       - SPARK_RPC_AUTHENTICATION_ENABLED=no
@@ -25,7 +25,7 @@ services:
 
 
   spark-worker:
-    image: bitnami/spark:latest
+    image: bitnami/spark:3.5.0-debian-11-r0
     environment:
       - SPARK_MODE=worker
       - SPARK_MASTER_URL=spark://spark-master:7077
