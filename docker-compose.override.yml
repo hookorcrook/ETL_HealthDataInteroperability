@@ -12,7 +12,7 @@ services:
       - SPARK_SSL_ENABLED=no
       - SPARK_MASTER_WEBUI_PORT=8081
     ports:
-      - "8081:8081"
+      - "8085:8081"
       - "7077:7077"
     volumes:
       - spark-data:/bitnami
@@ -21,7 +21,7 @@ services:
       - ${AIRFLOW_PROJ_DIR:-.}/data:/opt/spark-data
 
     networks:
-      - airflow
+      - shared-network
 
 
   spark-worker:
@@ -43,7 +43,7 @@ services:
       - ${AIRFLOW_PROJ_DIR:-.}/data:/opt/spark-data
     
     networks:
-      - airflow
+      - shared-network
     
     depends_on:
       - spark-master
