@@ -36,16 +36,22 @@ def sync_openmrs_to_dhis2():
     def load_to_dhis2():
         import requests, json
         timestamp = datetime.now().strftime("%Y%m%d")
-        output_filename = "./include/temp_data/patients_ready_{timestamp}.json"
+        output_filename = f"./include/temp_data/patients_ready_{timestamp}.json"
         with open(output_filename) as f:
             patients = json.load(f)
 
         url = "http://web:8080/api/trackedEntityInstances"
-        auth = ("admin", "district")
+        headers = {
+            "Authorization": "ApiToken d2p_afc0zYTgYyGErraPlIv83JFiKv0Vyh7nHHu8mG8fFzoJ2dXRgT",
+            "Content-Type": "application/json"
+        }
 
         for patient in patients:
-            r = requests.post(url, json=patient, auth=auth)
-            print(f"Posted: {r.status_code} - {r.text}")
+            print(f"Posting patient {patient['patient_id']} to DHIS2 using url: {url}")
+            r = requests.post(url, json=patient, headers=headers)
+            print(f"Posted Successfully for patient : {patient['patient_id']}.  {r.status_code} - {r.text}")
+            if r.status_code >= 400:
+                raise Exception(f"Failed to load data to DHIS2: {r.status_code} - {r.text}")
 
     load = PythonOperator(
         task_id="load_to_dhis2",
@@ -53,4 +59,5 @@ def sync_openmrs_to_dhis2():
     )
 
     extract >> transform >> load
+
 dag = sync_openmrs_to_dhis2()

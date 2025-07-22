@@ -1,5 +1,5 @@
 from pyspark.sql import SparkSession
-from pyspark.sql.functions import explode
+from pyspark.sql.functions import col
 from datetime import datetime
 import os
 import requests
@@ -35,10 +35,19 @@ with open(transition_path, "w") as f:
 
 # Read raw JSON
 df_raw = spark.read.json(transition_path, multiLine=True)
-df_raw.show()
 
-df_patients = df_raw.select(explode("results").alias("patient")).select("patient.uuid")
 
+df_patients = df_raw.select(
+    "uuid",
+    "display",
+    "gender",
+    "age",
+    "birthdate",
+    col("preferredName.display").alias("name"),
+    col("preferredAddress.display").alias("address")
+)
+
+df_patients.show()
 
 # Collect UUIDs to driver
 uuids = [row["uuid"] for row in df_patients.collect()]
@@ -55,16 +64,32 @@ for uuid in uuids:
         response = requests.get(url, auth=auth, timeout=5)
         if response.status_code == 200:
             patient_data = response.json()
+
+            person_data = patient_data.get("person", {})
+
+            if not person_data:
+                print(f"No person data found for UUID: {uuid}")
+                continue
+            full_name = patient_data.get("display", "")
+            #full_name = f"{preferred_name.get('givenName', '')} {preferred_name.get('familyName', '')}".strip()
+
+            birthdate_raw = person_data.get("birthdate")
+            dob = birthdate_raw.split("T")[0] if birthdate_raw else None
+            gender = person_data.get("gender")
+            name = full_name.split(" - ", 1)[-1] if " - " in full_name else full_name
+
             valid_patients.append({
                 "patient_id": uuid,
-                "name": patient_data.get("display"),
-                "dob": patient_data.get("birthdate"),
-                "gender": patient_data.get("gender")
+                "name": name,
+                "dob": dob,
+                "gender": gender
             })
+
         else:
-            print(f"Invalid patient UUID: {uuid} and url {url}- Status: {response.status_code}")
+            print(f"Invalid patient UUID: {uuid} and url {url} - Status: {response.status_code}")
     except Exception as e:
         print(f"Error checking UUID {uuid}: {str(e)}")
+
 
 # Write output
 if valid_patients:
