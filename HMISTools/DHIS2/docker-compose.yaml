@@ -1,6 +1,7 @@
 services:
   web:
-    image: "dhis2/core:2.41.0.0-rc"
+    #image: "dhis2/core:2.41.0.0-rc"
+    image: "dhis2/core:2.41.4.2-rc"
     # image: "dhis2/core:40.3.0-20240228T141918Z"
     # image: "dhis2/core:39.5.0-rc"
     # image: "dhis2/core:38.6.0-20240228T142217Z"
