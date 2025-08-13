@@ -3,3 +3,11 @@ In this project, I will be using apache spark and apache airflow to create an ET
 
 NOTE: docker network create shared-network
 Run this command in your docker daemon first to create a shared network that will be used by all the containers
+
+Note: In DHIS2 Docker check that apiTokenAllowAll = true property is set
+
+Note: Create an API Key in DHIS2 first, use it for Bearer Auth
+
+NOTE: From User Management in DHIS2, assign organization to the user and allow Tracked Entity Access 
+
+Note
