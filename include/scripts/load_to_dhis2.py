@@ -10,7 +10,8 @@ timestamp = datetime.now().strftime("%Y%m%d")
 transformed_path = f"./include/temp_data/patients_ready_{timestamp}.json"
 
 #api_token = "d2p_afc0zYTgYyGErraPlIv83JFiKv0Vyh7nHHu8mG8fFzoJ2dXRgT"
-api_token = "d2p_aPUJ1qzqSrSiBSPFDcSq2qx7l8tv6YEtPQMdhGSmF2Yu2FLdb4"
+#api_token = "d2p_aPUJ1qzqSrSiBSPFDcSq2qx7l8tv6YEtPQMdhGSmF2Yu2FLdb4"
+api_token = "d2p_YbLjXF742weKOQqB1vLjqLI3CBH67tidXDKgL7cuuvzm0ztdVh"
 base_url = "http://web:8080"
 
 

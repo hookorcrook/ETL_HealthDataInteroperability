@@ -5,9 +5,8 @@ NOTE: docker network create shared-network
 Run this command in your docker daemon first to create a shared network that will be used by all the containers
 
 Note: In DHIS2 Docker check that apiTokenAllowAll = true property is set
+    -Create an API Key in DHIS2 first, use it for Bearer Auth
+    -From User Management in DHIS2, assign organization to the user and allow Tracked Entity Access 
+    -In DHIS2 maintenance, make sure that program has all the TEI Attributes marked as Searchable, and assigned
+    -In DHIS2 maintenance, make sure that all the TEI attributes are searchable
 
-Note: Create an API Key in DHIS2 first, use it for Bearer Auth
-
-NOTE: From User Management in DHIS2, assign organization to the user and allow Tracked Entity Access 
-
-Note
