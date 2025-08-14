@@ -1,18 +1,31 @@
 from pyspark.sql import SparkSession
-from pyspark.sql.functions import col
+from pyspark.sql.functions import col, to_timestamp, regexp_replace, when
 from datetime import datetime
 import os
-import requests
+import sys
 import json
 
-# Config
-timestamp = datetime.now().strftime("%Y%m%d")
-input_path = f"./include/temp_data/patients_raw_{timestamp}.json"
-transition_path = f"./include/temp_data/patients_tmp_{timestamp}.json"
-output_path = f"./include/temp_data/patients_ready_{timestamp}.json"
+def get_spark_session():
+    """Create or get Spark session"""
+    return SparkSession.builder \
+        .appName("PatientTransform") \
+        .getOrCreate()
 
-openmrs_url = "http://openmrs-referenceapplication:8080/openmrs/ws/rest/v1/patient"
-auth = ("admin", "Admin123")
+def main(input_path: str, temp_data_path: str):
+    """Main transformation function
+    
+    Args:
+        input_path: Path to input file
+        temp_data_path: Path to temporary data directory
+    """
+    # Setup paths
+    timestamp = datetime.now().strftime("%Y%m%d")
+    transition_path = os.path.join(temp_data_path, f"patients_tmp_{timestamp}.json")
+    output_path = os.path.join(temp_data_path, f"patients_ready_{timestamp}.json")
+
+# OpenMRS configuration
+openmrs_url = f"{openmrs_conn.host}/patient"
+auth = (openmrs_conn.login, openmrs_conn.password)
 
 # Check if raw data exists
 if not os.path.exists(input_path):

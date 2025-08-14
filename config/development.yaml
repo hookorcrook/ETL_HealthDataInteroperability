@@ -1,0 +1,40 @@
+# Development environment configuration
+openmrs:
+  base_url: "${OPENMRS_URL}"
+  username: "${OPENMRS_USERNAME}"
+  password: "${OPENMRS_PASSWORD}"
+  api:
+    person_endpoint: "/ws/rest/v1/person"
+    patient_endpoint: "/ws/rest/v1/patient"
+    default_params:
+      v: "full"
+
+dhis2:
+  base_url: "${DHIS2_URL}"
+  api_token: "${DHIS2_API_TOKEN}"
+  api:
+    tracked_entity_endpoint: "/api/trackedEntityInstances"
+    program_endpoint: "/api/programs"
+    org_unit_endpoint: "/api/organisationUnits"
+    headers:
+      Content-Type: "application/json"
+      Accept: "application/json"
+
+spark:
+  master: "local[*]"  # Development uses local Spark
+  app_name: "HealthDataInteroperability-Dev"
+  config:
+    spark.executor.memory: "1g"
+    spark.driver.memory: "1g"
+    spark.sql.shuffle.partitions: "2"
+    spark.default.parallelism: "2"
+
+temp_data:
+  base_path: "./include/temp_data"
+  file_prefix: "patients"
+  cleanup: true  # Enable cleanup in development
+
+logging:
+  level: "DEBUG"
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  file: "logs/development.log"

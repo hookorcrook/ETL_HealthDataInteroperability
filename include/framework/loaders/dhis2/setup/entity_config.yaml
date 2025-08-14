@@ -1,0 +1,86 @@
+# DHIS2 Entity Configuration Template
+organization_units:
+  root:
+    name: "Health Facilities"
+    code: "HF"
+    openingDate: "2025-01-01"
+    parent: null
+  default_hierarchy:
+    - level: 1
+      type: "Country"
+    - level: 2
+      type: "Province"
+    - level: 3
+      type: "District"
+    - level: 4
+      type: "Facility"
+
+tracked_entity_types:
+  person:
+    name: "Person"
+    description: "Person tracked entity type"
+    attributes:
+      - name: "First Name"
+        valueType: "TEXT"
+        mandatory: true
+      - name: "Last Name"
+        valueType: "TEXT"
+        mandatory: true
+      - name: "Gender"
+        valueType: "TEXT"
+        mandatory: true
+        optionSet:
+          options:
+            - code: "M"
+              name: "Male"
+            - code: "F"
+              name: "Female"
+            - code: "O"
+              name: "Other"
+      - name: "Date of Birth"
+        valueType: "DATE"
+        mandatory: true
+      - name: "National ID"
+        valueType: "TEXT"
+        unique: true
+
+programs:
+  patient_tracking:
+    name: "Patient Tracking Program"
+    shortName: "PTP"
+    trackedEntityType: "Person"
+    programType: "WITH_REGISTRATION"
+    accessLevel: "OPEN"
+    enrollmentDateLabel: "Enrollment Date"
+    incidentDateLabel: "First Visit Date"
+    stages:
+      - name: "Initial Assessment"
+        description: "Initial patient assessment"
+        repeatable: false
+        elements:
+          - name: "Height"
+            valueType: "NUMBER"
+            unit: "cm"
+          - name: "Weight"
+            valueType: "NUMBER"
+            unit: "kg"
+          - name: "Blood Pressure"
+            valueType: "TEXT"
+      - name: "Follow-up Visit"
+        description: "Regular follow-up visit"
+        repeatable: true
+        elements:
+          - name: "Visit Date"
+            valueType: "DATE"
+          - name: "Symptoms"
+            valueType: "TEXT"
+          - name: "Treatment"
+            valueType: "TEXT"
+
+attribute_mappings:
+  person:
+    given_name: "First Name"
+    family_name: "Last Name"
+    gender: "Gender"
+    birthdate: "Date of Birth"
+    identifier: "National ID"

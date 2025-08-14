@@ -3,22 +3,35 @@ from datetime import datetime
 import os
 import requests
 import json
+from airflow.hooks.base import BaseHook
+from airflow.models import Variable
+from include.framework.config import Config
 
+# Load configuration
+config = Config()
 
+# Get DHIS2 connection
+dhis2_conn = BaseHook.get_connection('dhis2_api')
 
+# Setup paths
 timestamp = datetime.now().strftime("%Y%m%d")
-transformed_path = f"./include/temp_data/patients_ready_{timestamp}.json"
+temp_data_path = Variable.get("TEMP_DATA_PATH", "./include/temp_data")
+transformed_path = os.path.join(temp_data_path, f"patients_ready_{timestamp}.json")
 
-#api_token = "d2p_afc0zYTgYyGErraPlIv83JFiKv0Vyh7nHHu8mG8fFzoJ2dXRgT"
-api_token = "d2p_aPUJ1qzqSrSiBSPFDcSq2qx7l8tv6YEtPQMdhGSmF2Yu2FLdb4"
-base_url = "http://web:8080"
+# DHIS2 configuration
+base_url = dhis2_conn.host
+api_token = dhis2_conn.password  # We stored the API token in the password field
 
-
-spark = SparkSession.builder.appName("LoadPatientDHIS2").master("local[*]").getOrCreate()
+# Initialize Spark session with configuration
+spark_config = config.get('spark')
+spark = (SparkSession.builder
+         .appName(spark_config.get('app_name', "LoadPatientDHIS2"))
+         .master(spark_config.get('master', "local[*]"))
+         .getOrCreate())
 
 print(f"✅ Spark session started", flush=True)
 
-
+# Setup request headers
 headers = {
     "Authorization": f"ApiToken {api_token}",
     "Content-Type": "application/json",

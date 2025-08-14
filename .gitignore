@@ -1,6 +1,49 @@
-# Ignore Python cache files
+# Python
 __pycache__/
 *.py[cod]
+*.so
+.Python
+env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg
+.env
 
-# Ignore everything in the logs 
+# Logs and data
 logs/
+*.log
+include/temp_data/
+data/
+
+# IDEs and editors
+.idea/
+.vscode/
+*.swp
+*.swo
+*.swn
+.DS_Store
+
+# Docker
+.docker/
+docker-compose.override.yml
+
+# Virtual Environment
+venv/
+.venv/
+ENV/
+
+# Airflow
+airflow.db
+airflow.cfg
+webserver_config.py
