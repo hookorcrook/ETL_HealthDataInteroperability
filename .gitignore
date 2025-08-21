@@ -4,3 +4,9 @@ __pycache__/
 
 # Ignore everything in the logs 
 logs/
+
+# Ignore config file with sensitive data
+include/config.json
+
+# Keep example config
+!include/config.json.example

@@ -1,0 +1,11 @@
+{
+    "openmrs": {
+        "username": "your_username",
+        "password": "your_password",
+        "base_url": "http://localhost:8081/openmrs"
+    },
+    "dhis2": {
+        "api_key": "your_dhis2_api_key",
+        "base_url": "http://localhost:8082/api"
+    }
+}

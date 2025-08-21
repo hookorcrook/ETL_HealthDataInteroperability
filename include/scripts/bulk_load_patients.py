@@ -27,10 +27,22 @@ logging.basicConfig(
 # Initialize Faker
 fake = Faker()
 
+# Load configuration
+config_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'config.json')
+try:
+    with open(config_path, 'r') as f:
+        config = json.load(f)
+except FileNotFoundError:
+    logging.error(f"Configuration file not found at {config_path}")
+    sys.exit(1)
+except json.JSONDecodeError:
+    logging.error(f"Invalid JSON in configuration file at {config_path}")
+    sys.exit(1)
+
 # OpenMRS API Configuration
-OPENMRS_BASE_URL = "http://localhost:8081/openmrs/ws/rest/v1"
-USERNAME = "admin"
-PASSWORD = "Admin123"
+OPENMRS_BASE_URL = f"{config['openmrs']['base_url']}/ws/rest/v1"
+USERNAME = config['openmrs']['username']
+PASSWORD = config['openmrs']['password']
 
 def create_person(data):
     """Create a person in OpenMRS"""
@@ -50,7 +62,7 @@ def create_person(data):
 
 def create_patient(person_data):
     """Create a patient using person data"""
-    url = "http://localhost:8081/openmrs/registrationapp/registerPatient/submit.action"
+    url = f"{config['openmrs']['base_url']}/registrationapp/registerPatient/submit.action"
     
     try:
         # Parse birthdate components
@@ -87,8 +99,8 @@ def create_patient(person_data):
             
             # App specific parameters
             "appId": "referenceapplication.registrationapp.registerPatient",
-            "successUrl": "http://localhost:8081/openmrs/registrationapp/findPatient.page", # Where to redirect on success
-            "returnUrl": "http://localhost:8081/openmrs/registrationapp/findPatient.page",  # Where to redirect on cancel
+            "successUrl": f"{config['openmrs']['base_url']}/registrationapp/findPatient.page", # Where to redirect on success
+            "returnUrl": f"{config['openmrs']['base_url']}/registrationapp/findPatient.page",  # Where to redirect on cancel
             # Additional required parameters from UI form
             "action": "submit",
             "identifierType": "05a29f94-c0ed-11e2-94be-8c13b969e334",  # OpenMRS ID
