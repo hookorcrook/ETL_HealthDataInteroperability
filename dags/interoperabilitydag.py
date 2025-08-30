@@ -23,16 +23,35 @@ def load_openmrs_to_dhis2():
         timestamp = datetime.now().strftime("%Y%m%d")
         filename = f"./include/temp_data/patients_raw_{timestamp}.json"
 
-        url = "http://openmrs-referenceapplication:8080/openmrs/ws/rest/v1/person?q=&v=default"
+        openmrs_url = "http://openmrs-referenceapplication:8080/openmrs/ws/rest/v1/person"
         auth = ("admin", "Admin123")
 
-        response = requests.get(url, auth=auth)
-        response.raise_for_status()
+        all_results = []
+        url = f"{openmrs_url}?q=&v=default"
 
+        while url:
+            response = requests.get(url, auth=auth)
+            response.raise_for_status()
+            data = response.json()
+            results = data.get("results", [])
+            all_results.extend(results)
+            print(f"Fetched {len(results)} records, total so far: {len(all_results)}")
+
+            # Pagination: get next link
+            next_url = None
+            for link in data.get("links", []):
+                if link.get("rel") == "next":
+                    next_url = link.get("uri")
+                    break
+            url = next_url
+
+        # Save all persons to file
+        os.makedirs(os.path.dirname(filename), exist_ok=True)
         with open(filename, "w") as f:
-            f.write(response.text)
+            json.dump({"results": all_results}, f, indent=2)
 
-        return filename  # Return path to use in next step
+        print(f"✅ Total persons fetched: {len(all_results)}")
+        return filename
 
     transform = SparkSubmitOperator(
         task_id="transform_with_spark",
@@ -50,19 +69,29 @@ def load_openmrs_to_dhis2():
         verbose=True
     )
 
+
     def cleanup_temp_data():
         temp_dir = "./include/temp_data"
+        skip_file = "patients_all.json"
+
         if os.path.exists(temp_dir):
             for filename in os.listdir(temp_dir):
+                if filename == skip_file:
+                    continue  # skip this file
                 file_path = os.path.join(temp_dir, filename)
                 try:
                     if os.path.isfile(file_path):
                         os.remove(file_path)
                         print(f"✅ Removed {file_path}")
+                    elif os.path.isdir(file_path):
+                        # Remove directories recursively
+                        shutil.rmtree(file_path)
+                        print(f"✅ Removed directory {file_path}")
                 except Exception as e:
                     print(f"⚠️ Failed to remove {file_path}: {e}")
         else:
             print("ℹ️ Temp directory does not exist")
+
 
     cleanup = PythonOperator(
         task_id="cleanup_temp_data",

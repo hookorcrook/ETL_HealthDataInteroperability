@@ -10,3 +10,6 @@ include/config.json
 
 # Keep example config
 !include/config.json.example
+
+# Ignore everything in temp_data
+include/temp_data/

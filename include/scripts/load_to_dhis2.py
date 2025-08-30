@@ -392,6 +392,8 @@ def load_to_dhis2(filepath):
     with open(filepath) as f:
         patients = json.load(f)
 
+    created_count = 0
+
     for patient in patients:
         # 🔍 Check if patient already exists
         existing_tei  = tracked_entity_exists_by_patient_id(org_unit_id,tracked_entity_type_id,attr_patient_id,patient["patient_id"])
@@ -488,8 +490,11 @@ def load_to_dhis2(filepath):
 
         if enroll_response.status_code in [200, 201]:
             print(f"✅ Enrolled TEI {tei_id} in program {program_id}", flush=True)
+            created_count += 1 
         else:
             print(f"❌ Failed to enroll TEI {tei_id}: {enroll_response.status_code} - {enroll_response.text}", flush=True)
+
+    print(f"🎯 Total new TEIs created in this run: {created_count}", flush=True)
 
 
 try:
