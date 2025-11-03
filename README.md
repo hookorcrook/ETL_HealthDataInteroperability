@@ -9,4 +9,6 @@ Note: In DHIS2 Docker check that apiTokenAllowAll = true property is set
     -From User Management in DHIS2, assign organization to the user and allow Tracked Entity Access 
     -In DHIS2 maintenance, make sure that program has all the TEI Attributes marked as Searchable, and assigned
     -In DHIS2 maintenance, make sure that all the TEI attributes are searchable
+    -If API key does not work then logout, login again by typing in credentials
 
+Note: In OpenMRS, update the parameter person.searchMaxResults (Global Properties to a larger number to get person data more than 1000 records)
