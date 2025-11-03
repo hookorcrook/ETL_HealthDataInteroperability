@@ -19,7 +19,7 @@ fake = Faker()
 
 # Setup Chrome headless
 options = webdriver.ChromeOptions()
-options.add_argument("--headless=new")
+#options.add_argument("--headless=new")
 options.add_argument("--window-size=1920,1080")
 driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
 wait = WebDriverWait(driver, 10)
@@ -106,6 +106,6 @@ try:
 
 finally:
     driver.quit()
-    print(f"\nCreated {len(created_patients)} Patients Successfully!:")
+    print(f"\nCreated {len(created_patients)} Patient(s) Successfully Created in OpenMRS!:")
     for patient in created_patients:
         print(patient)

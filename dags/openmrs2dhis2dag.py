@@ -2,23 +2,49 @@ from airflow.decorators import dag, task
 from airflow.providers.apache.spark.operators.spark_submit import SparkSubmitOperator
 from airflow.operators.python import PythonOperator
 from datetime import datetime
+import requests,json,os
 
 @dag(schedule_interval="@daily", start_date=datetime(2025, 1, 1), catchup=False)
 def sync_openmrs_to_dhis2():
 
-    def extract_patient():
-        import requests
-        url = "http://openmrs-referenceapplication:8080/openmrs/ws/rest/v1/person?q=&v=default"
-        params = {"v": "full"}
+    def extract_patient():  
+        base_url = "http://openmrs-referenceapplication:8080/openmrs/ws/rest/v1/person"
+        params = {"v": "full", "q":""}
         auth = ("admin", "Admin123")
         timestamp = datetime.now().strftime("%Y%m%d")
         filename = f"./include/temp_data/patients_raw_{timestamp}.json"
 
-        response = requests.get(url, auth=auth, params=params)
-        response.raise_for_status()
+        all_results = []
+        start_index = 0
+        page_size = 50  # OpenMRS default
+        while True:
+            paged_url = f"{base_url}?startIndex={start_index}"
+            response = requests.get(paged_url, auth=auth, params=params)
+            response.raise_for_status()
+            data = response.json()
+            
+            results = data.get("results", [])
+            if not results:
+                break
 
+            all_results.extend(results)
+            print(f"Fetched {len(results)} records, total so far: {len(all_results)}")
+            
+            # If no "next" link in response, stop
+            links = data.get("links", [])
+            next_link = next((link for link in links if link.get("rel") == "next"), None)
+            if not next_link:
+                break
+
+            start_index += len(results)
+
+        os.makedirs(os.path.dirname(filename), exist_ok=True)
         with open(filename, "w") as f:
-            f.write(response.text)
+            json.dump({"results": all_results}, f, indent=2)
+        
+        print(f"✅ Total persons fetched: {len(all_results)}")
+
+
 
     extract = PythonOperator(
         task_id="extract_patient",

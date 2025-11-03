@@ -11,7 +11,11 @@ transformed_path = f"./include/temp_data/patients_ready_{timestamp}.json"
 
 #api_token = "d2p_afc0zYTgYyGErraPlIv83JFiKv0Vyh7nHHu8mG8fFzoJ2dXRgT"
 #api_token = "d2p_aPUJ1qzqSrSiBSPFDcSq2qx7l8tv6YEtPQMdhGSmF2Yu2FLdb4"
-api_token = "d2p_YbLjXF742weKOQqB1vLjqLI3CBH67tidXDKgL7cuuvzm0ztdVh"
+#api_token = "d2p_YbLjXF742weKOQqB1vLjqLI3CBH67tidXDKgL7cuuvzm0ztdVh"
+#api_token = "d2p_rPO2JM8NHa0FODmRylwfqZXgpsYrzIJHxqu1jrT2CHyV0igOT6"
+api_token = "d2p_N72cleqPOXj7MhPk4CvJBy9r9fF4QlKCx8mXSBA4umaS0nfgj5"
+
+
 base_url = "http://web:8080"
 
 
@@ -494,7 +498,7 @@ def load_to_dhis2(filepath):
         else:
             print(f"❌ Failed to enroll TEI {tei_id}: {enroll_response.status_code} - {enroll_response.text}", flush=True)
 
-    print(f"🎯 Total new TEIs created in this run: {created_count}", flush=True)
+    print(f"🎯 Total new Tracked Entity Instances of Patients created in DHIS2 in this run: {created_count}", flush=True)
 
 
 try:

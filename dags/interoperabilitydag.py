@@ -42,6 +42,7 @@ def load_openmrs_to_dhis2():
             for link in data.get("links", []):
                 if link.get("rel") == "next":
                     next_url = link.get("uri")
+                    print(f"Next URL: {next_url}")
                     break
             url = next_url
 
